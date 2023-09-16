@@ -1,8 +1,7 @@
-name: publish photonee Desktop-win&mac
+name: publish photonee Desktop-linux
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["linux"]
     tags:
       - 'v*'
   workflow_dispatch:
@@ -70,7 +69,7 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
 
-  publish-win-release:
+  publish-linux-release:
     permissions:
       contents: write
     runs-on: [ubuntu-latest]
