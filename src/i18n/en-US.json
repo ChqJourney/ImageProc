@@ -1,7 +1,7 @@
 {
     "drag_notice":"please drag image or folder to this window and drop",
-    "open_image_file":"Open image file",
-    "open_folder":"Open folder",
+    "open_image_file":"Open image file - Ctrl + O",
+    "open_folder":"Open folder  - Ctrl + F",
     "zoom_in":"Zoom in",
     "zoom_out":"Zoom out",
     "rotate_clockwise":"Rotate clockwise",
