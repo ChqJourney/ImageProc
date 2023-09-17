@@ -1,5 +1,6 @@
 {
     "drag_notice":"please drag image or folder to this window and drop",
+    "shortcut":"use shortcut, Ctrl+O(open image) or Ctrl+F(open folder)",
     "open_image_file":"Open image file",
     "open_folder":"Open folder",
     "zoom_in":"Zoom in",

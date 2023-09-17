@@ -120,7 +120,8 @@
   <div>
     <div class="font-sans text-gray-400 -translate-x-1/2 -translate-y-1/2 items-center absolute top-[50%] flex flex-col justify-center">
       <svg class="h-24 w-24 fill-violet-500 dark:fill-slate-400" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><path d="M928 128H96C42.98 128 0 170.98 0 224v576c0 53.02 42.98 96 96 96h832c53.02 0 96-42.98 96-96V224c0-53.02-42.98-96-96-96z m-12 672H108a12 12 0 0 1-12-12V236a12 12 0 0 1 12-12h808a12 12 0 0 1 12 12v552a12 12 0 0 1-12 12zM256 304c-44.182 0-80 35.818-80 80s35.818 80 80 80 80-35.818 80-80-35.818-80-80-80zM192 704h640v-160l-175.03-175.03c-9.372-9.372-24.568-9.372-33.942 0L384 608l-79.03-79.03c-9.372-9.372-24.568-9.372-33.942 0L192 608v96z"></path></svg>
-      {$_('drag_notice')}
+      <div class="mb-4">{$_('drag_notice')}</div>
+      <div class="text-xs">{$_('shortcut')}</div>
     </div>
   </div>
   {/if}

@@ -1,5 +1,6 @@
 {
     "drag_notice":"拖拽图片或文件夹到此处！",
+    "shortcut":"使用快捷键Ctrl+O(打开图片）或Ctrl+F(打开文件夹）",
     "open_image_file":"打开图片文件",
     "open_folder":"打开文件夹",
     "zoom_in":"放大",
