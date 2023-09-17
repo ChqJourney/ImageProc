@@ -85,7 +85,17 @@
   }
 </script>
 
-<svelte:window class="" bind:innerHeight={osh} bind:innerWidth={osw} />
+<svelte:window class="" on:keydown={async(e)=>{
+  if(e.ctrlKey&&e.key==="o"){
+    await openFile()
+  }
+  if(e.ctrlKey&&e.key==="f"){
+    await openFolder()
+  }
+  if(e.ctrlKey&&e.key==="c"){
+    await clearImage()
+  }
+}} bind:innerHeight={osh} bind:innerWidth={osw} />
 <Modal width={"w-2/3"} isOpen={$guiStore.modalShow} component={$guiStore.modalComponent} on:negitive={()=>closeModal()}></Modal>
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div on:contextmenu={e=>e.preventDefault()}

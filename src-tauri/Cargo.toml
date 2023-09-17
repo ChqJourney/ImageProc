@@ -1,6 +1,6 @@
 [package]
 name = "Photonee_Viewer"
-version = "0.1.4"
+version = "0.1.6"
 description = "Viewer for images"
 authors = ["patrick chen"]
 license = "MIT"
