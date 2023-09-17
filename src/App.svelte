@@ -167,12 +167,13 @@
         items: [
           {
             label: "Open file",
-            shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+O"}`,
+            shortcut:"ctrl+o",
+            // shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+O"}`,
             event: "openFile-menu-clicked",
           },
           {
             label: "Open folder",
-            shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+F"}`,
+            shortcut: "ctrl+f",
             event: "openFolder-menu-clicked",
           },
           {
@@ -180,7 +181,7 @@
           },
           {
             label: "Close",
-            shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+C"}`,
+            shortcut: "ctrl+c",
             event: "close-menu-clicked",
           },
         ],
