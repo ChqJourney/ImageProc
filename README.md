@@ -16,7 +16,7 @@ This app can preview images(png, bmg, jpg...), and manipulate images with simple
 
 ## Download
 
-Available for Linux(soon), macOS(ready) and Windows(ready).
+Available for Linux, macOS and Windows.
 
 Please go to [releases page](https://github.com/ChqJourney/ImageProc/releases) to check version you need. 
 
@@ -28,7 +28,7 @@ Portable version is provided.
 - drag and drop image and folder to window
 - click the open file or open folder button
 - right click in this app window
-- global key shortcut to open images
+- key shortcut to open and close images
 - right click image with "open with"
 - drop image to this app icon
 
