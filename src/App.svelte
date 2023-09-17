@@ -1,59 +1,68 @@
 <script>
-// @ts-nocheck
+  // @ts-nocheck
   import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { fitSize } from "./funcs/image";
   import { listen } from "@tauri-apps/api/event";
   import WinBtns from "./lib/winBtns.svelte";
   import Brand from "./lib/svgs/Brand.svelte";
   import TopBar from "./lib/TopBar.svelte";
   import ToolBar from "./lib/ToolBar.svelte";
-  import { clearImage, closeModal, dataStore, guiStore, imageStore, resetRotation, updateData, updateImage } from "./store";
+  import {
+    clearImage,
+    closeModal,
+    dataStore,
+    guiStore,
+    imageStore,
+    resetRotation,
+    updateData,
+    updateImage,
+  } from "./store";
   import { dragHandling, fileName } from "./funcs/file";
-  import { register } from '@tauri-apps/api/globalShortcut';
+  import {
+    register,
+    unregister,
+    unregisterAll,
+  } from "@tauri-apps/api/globalShortcut";
   import Thumbs from "./lib/Thumbs.svelte";
   import { _ } from "svelte-i18n";
   import Infos from "./lib/Infos.svelte";
-    import { openFile, openFolder } from "./funcs/biz";
-    import { type } from "@tauri-apps/api/os";
-    import Modal from "./lib/Modal.svelte";
-    listen("openFile-menu-clicked",async()=>await openFile());
-    listen("openFolder-menu-clicked",async()=>await openFolder());
-    listen("close-menu-clicked",()=>clearImage())
-  onMount(async () => {
-    $guiStore.os=await type()
-    await register("CommandOrControl+O",async()=>await openFile());
-    await register("CommandOrControl+Shift+O",async()=>await openFolder());
-    await register("CommandOrControl+Shift+C",()=>clearImage());
-    const path = await invoke("init_file");
-    
-    if (path) {
-      console.log(path)
-      const re=await dragHandling(path);
-      if(re){
+  import { openFile, openFolder } from "./funcs/biz";
+  import { type } from "@tauri-apps/api/os";
+  import Modal from "./lib/Modal.svelte";
+  listen("openFile-menu-clicked", async () => await openFile());
+  listen("openFolder-menu-clicked", async () => await openFolder());
+  listen("close-menu-clicked", () => clearImage());
 
+  onMount(async () => {
+    $guiStore.os = await type();
+    // await register("CommandOrControl+O",async()=>await openFile());
+    // await register("CommandOrControl+Shift+O",async()=>await openFolder());
+    // await register("CommandOrControl+Shift+C",()=>clearImage());
+    const path = await invoke("init_file");
+
+    if (path) {
+      console.log(path);
+      const re = await dragHandling(path);
+      if (re) {
         updateData({
           mode: re.mode,
-          source: [
-            ...re.source
-          ]
+          source: [...re.source],
         });
       }
     }
     const unlisten = await listen("tauri://file-drop", async (event) => {
-      
-        const result = await dragHandling(event.payload[0]);
-        if(!result){
-          isDragHover = false;
-          return;
-        }
-        resetRotation();
-        updateData({
-          mode: result.mode,
-          source: [...result.source]
-        });
+      const result = await dragHandling(event.payload[0]);
+      if (!result) {
         isDragHover = false;
-      
+        return;
+      }
+      resetRotation();
+      updateData({
+        mode: result.mode,
+        source: [...result.source],
+      });
+      isDragHover = false;
     });
     await listen("tauri://file-drop-hover", async (event) => {
       isDragHover = true;
@@ -62,7 +71,7 @@
       isDragHover = false;
     });
   });
-  let panning
+  let panning;
   let isDragHover = false;
   let w, h;
   let img;
@@ -90,10 +99,32 @@
   }
 </script>
 
-<svelte:window class="" bind:innerHeight={osh} bind:innerWidth={osw} />
-<Modal width={"w-2/3"} on:negitive={()=>closeModal()} isOpen={$guiStore.modalShow} component={$guiStore.modalComponent}></Modal>
+<svelte:window
+  class=""
+  on:keydown={async (e) => {
+    // console.log(e)
+    if (e.ctrlKey && e.key === "o") {
+      await openFile();
+    }
+    if (e.ctrlKey && e.key === "f") {
+      await openFolder();
+    }
+    if (e.ctrlKey && e.key === "c") {
+      await clearImage();
+    }
+  }}
+  bind:innerHeight={osh}
+  bind:innerWidth={osw}
+/>
+<Modal
+  width={"w-2/3"}
+  on:negitive={() => closeModal()}
+  isOpen={$guiStore.modalShow}
+  component={$guiStore.modalComponent}
+/>
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div on:contextmenu={e=>e.preventDefault()}
+<div
+  on:contextmenu={(e) => e.preventDefault()}
   style="border-radius: 8px;"
   class={`relative flex flex-col items-center justify-center h-screen py-10 px-8 bg-gray-50 dark:bg-gray-600 `}
 >
@@ -101,51 +132,60 @@
     <Brand color="fill-[#0EA5E9]" width="w-20" height="h-10" />
 
     <div class="flex items-center justify-center gap-4">
-      <ToolBar
-        {img}
-        containerH={h}
-        containerW={w}
-      />
+      <ToolBar {img} containerH={h} containerW={w} />
     </div>
 
     <WinBtns />
   </TopBar>
-  
+
   {#if $dataStore.source.length === 0}
-  <div>
-    <div class="font-sans text-gray-400 -translate-x-1/2 -translate-y-1/2 items-center absolute top-[50%] flex flex-col justify-center">
-      <svg class="h-24 w-24 fill-violet-500 dark:fill-slate-400" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><path d="M928 128H96C42.98 128 0 170.98 0 224v576c0 53.02 42.98 96 96 96h832c53.02 0 96-42.98 96-96V224c0-53.02-42.98-96-96-96z m-12 672H108a12 12 0 0 1-12-12V236a12 12 0 0 1 12-12h808a12 12 0 0 1 12 12v552a12 12 0 0 1-12 12zM256 304c-44.182 0-80 35.818-80 80s35.818 80 80 80 80-35.818 80-80-35.818-80-80-80zM192 704h640v-160l-175.03-175.03c-9.372-9.372-24.568-9.372-33.942 0L384 608l-79.03-79.03c-9.372-9.372-24.568-9.372-33.942 0L192 608v96z"></path></svg>
-      {$_('drag_notice')}
+    <div>
+      <div
+        class="font-sans text-gray-400 -translate-x-1/2 -translate-y-1/2 items-center absolute top-[50%] flex flex-col justify-center"
+      >
+        <svg
+          class="h-24 w-24 fill-violet-500 dark:fill-slate-400"
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          width="200"
+          height="200"
+          ><path
+            d="M928 128H96C42.98 128 0 170.98 0 224v576c0 53.02 42.98 96 96 96h832c53.02 0 96-42.98 96-96V224c0-53.02-42.98-96-96-96z m-12 672H108a12 12 0 0 1-12-12V236a12 12 0 0 1 12-12h808a12 12 0 0 1 12 12v552a12 12 0 0 1-12 12zM256 304c-44.182 0-80 35.818-80 80s35.818 80 80 80 80-35.818 80-80-35.818-80-80-80zM192 704h640v-160l-175.03-175.03c-9.372-9.372-24.568-9.372-33.942 0L384 608l-79.03-79.03c-9.372-9.372-24.568-9.372-33.942 0L192 608v96z"
+          /></svg
+        >
+        {$_("drag_notice")}
+      </div>
     </div>
-  </div>
   {/if}
- 
-  <div on:contextmenu={async(e)=>{
-    e.preventDefault();
-    e.stopPropagation();
-    await invoke("plugin:context_menu|show_context_menu",{
-      items:[
-        {
-          label:"Open file",
-          shortcut:`${$guiStore.os==="Darwin"?"":"Ctrl+O"}`,
-          event:"openFile-menu-clicked"
-        },
-        {
-          label:"Open folder",
-          shortcut:`${$guiStore.os==="Darwin"?"":"Ctrl+Shift+O"}`,
-          event:"openFolder-menu-clicked"
-        },
-        {
-          is_separator:true
-        },
-        {
-          label:"Close",
-          shortcut:`${$guiStore.os==="Darwin"?"":"Ctrl+Shift+C"}`,
-          event:"close-menu-clicked"
-        },
-      ]
-    })
-  }}
+
+  <div
+    on:contextmenu={async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await invoke("plugin:context_menu|show_context_menu", {
+        items: [
+          {
+            label: "Open file",
+            shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+O"}`,
+            event: "openFile-menu-clicked",
+          },
+          {
+            label: "Open folder",
+            shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+F"}`,
+            event: "openFolder-menu-clicked",
+          },
+          {
+            is_separator: true,
+          },
+          {
+            label: "Close",
+            shortcut: `${$guiStore.os === "Darwin" ? "" : "Ctrl+C"}`,
+            event: "close-menu-clicked",
+          },
+        ],
+      });
+    }}
     bind:clientWidth={w}
     bind:clientHeight={h}
     class={`w-full ${
@@ -154,18 +194,33 @@
         : "border-t dark:border-0"
     } overflow-hidden h-full relative`}
   >
-  {#if $dataStore.source.length !== 0 && $imageStore.exif}
-  <div class="absolute w-2/5 z-40 h-full top-0 right-0 bg-gray-50 pl-4 py-4 overflow-auto">
-    <button on:click={()=>{
-      $imageStore.exif=undefined;
-    }} class="absolute right-1 top-1 w-6 h-6 rounded-md items-center hover:bg-slate-400 hover:fill-white flex justify-center" >
-      <svg class="h-4 w-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><path d="M563.8 512l262.5-312.9c4.4-5.2 0.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9c-4.4 5.2-0.7 13.1 6.1 13.1h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z"></path></svg>
-    </button>
-    <Infos info={$imageStore.exif}/>
-  </div>
-{/if}
+    {#if $dataStore.source.length !== 0 && $imageStore.exif}
+      <div
+        class="absolute w-2/5 z-40 h-full top-0 right-0 bg-gray-50 pl-4 py-4 overflow-auto"
+      >
+        <button
+          on:click={() => {
+            $imageStore.exif = undefined;
+          }}
+          class="absolute right-1 top-1 w-6 h-6 rounded-md items-center hover:bg-slate-400 hover:fill-white flex justify-center"
+        >
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            width="200"
+            height="200"
+            ><path
+              d="M563.8 512l262.5-312.9c4.4-5.2 0.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9c-4.4 5.2-0.7 13.1 6.1 13.1h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z"
+            /></svg
+          >
+        </button>
+        <Infos info={$imageStore.exif} />
+      </div>
+    {/if}
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img 
+    <img
       on:load={() => {
         console.log(w, h);
         const result = fitSize(img, w, h, 36);
@@ -174,33 +229,29 @@
           scaleY: result.ratio,
           pointX: result.offsetX,
           pointY: result.offsetY,
-        })
-        
+        });
       }}
       on:wheel={(e) => {
         e.preventDefault();
         var xs = (e.clientX - $imageStore.pointX) / $imageStore.scaleX,
           ys = (e.clientY - $imageStore.pointY) / $imageStore.scaleY,
           delta = e.wheelDelta ? e.wheelDelta : -e.deltaY;
-        
-          if (delta > 0) {
-            updateImage({
-              pointX: e.clientX - xs * $imageStore.scaleX,
-          pointY: e.clientY - ys * $imageStore.scaleY,
-          scaleX:$imageStore.scaleX *1.1,
-          scaleY:$imageStore.scaleY *1.1
-            })
-            
-         
+
+        if (delta > 0) {
+          updateImage({
+            pointX: e.clientX - xs * $imageStore.scaleX,
+            pointY: e.clientY - ys * $imageStore.scaleY,
+            scaleX: $imageStore.scaleX * 1.1,
+            scaleY: $imageStore.scaleY * 1.1,
+          });
         } else {
           updateImage({
             pointX: e.clientX - xs * $imageStore.scaleX,
-          pointY: e.clientY - ys * $imageStore.scaleY,
-          scaleX:$imageStore.scaleX /1.1,
-          scaleY:$imageStore.scaleY /1.1
-          })
+            pointY: e.clientY - ys * $imageStore.scaleY,
+            scaleX: $imageStore.scaleX / 1.1,
+            scaleY: $imageStore.scaleY / 1.1,
+          });
         }
-       
       }}
       on:mousedown={(e) => {
         e.preventDefault();
@@ -209,10 +260,10 @@
           y: e.clientY - $imageStore.pointY,
         };
         console.log(start);
-        panning=true;
+        panning = true;
       }}
       on:mouseup={(e) => {
-        panning=false;
+        panning = false;
       }}
       on:mousemove={(e) => {
         e.preventDefault();
@@ -222,8 +273,7 @@
         updateImage({
           pointX: e.clientX - start.x,
           pointY: e.clientY - start.y,
-        })
-        
+        });
       }}
       style="max-width:1000%;transform: {transform};"
       class={`z-10 cursor-grab absolute object-cover ${
@@ -236,7 +286,13 @@
     />
   </div>
 
-  <div class={`w-full px-4 ${($dataStore.mode === "folder"&&$dataStore.source.length>0)? "" : "hidden"}`}>
+  <div
+    class={`w-full px-4 ${
+      $dataStore.mode === "folder" && $dataStore.source.length > 0
+        ? ""
+        : "hidden"
+    }`}
+  >
     <Thumbs />
   </div>
   {#if $dataStore.source.length > 1}
