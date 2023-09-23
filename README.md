@@ -8,6 +8,8 @@
 
 
 This app can preview images(png, bmg, jpg...), and manipulate images with simple action, resize, flip, rotate, remove background, etc.
+## technial stack
+Based on Tauri, svelte, Tailwind CSS
 
 ## Advantages
 - **Easy to use** simple interface, easy to get started with 

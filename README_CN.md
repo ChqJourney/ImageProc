@@ -8,6 +8,8 @@
 
 此跨平台软件用于预览、浏览图片文件，兼容多种图形格式，png, bmp, jpg,webp, gif等。
 适用于windows, mac os, Linux。
+## 技术栈
+基于Tauri, Svelte, Tailwind CSS
 
 ## 优点
 - **易用** 简洁的界面设计，上手即用
