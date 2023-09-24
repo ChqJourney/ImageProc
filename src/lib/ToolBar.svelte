@@ -1,8 +1,6 @@
 <script>
-  import { message, open } from "@tauri-apps/api/dialog";
   import { fitSize } from "../funcs/image";
   import { clearImage,imageStore, guiStore, updateData, updateImage, showModal } from "../store";
-  import { dragHandling } from "../funcs/file";
   import { _, locale } from "svelte-i18n";
   import * as EXIF from "exif-js";
     import { openFile, openFolder } from "../funcs/biz";

@@ -102,23 +102,13 @@
         containerW={w}
       />
     </div>
-    <!-- <button on:click={()=>dispatch("switch_page",{page:Processor})}
+    {#if $dataStore.source.length!==0}
+    <button on:click={()=>dispatch("switch_page",{page:Processor})}
     class="hover:bg-gray-500 dark:fill-slate-200 dark:hover:fill-sky-500 dark:hover:bg-gray-400 tooltip rounded-md p-1 hover:fill-white"
   >
-    <svg
-      class="h-5 w-5"
-      viewBox="0 0 1024 1024"
-      version="1.1"
-      xmlns="http://www.w3.org/2000/svg"
-      width="200"
-      height="200"
-      ><path
-        d="M928 144H96a32 32 0 0 0-32 32v672a32 32 0 0 0 32 32h478.08v-64h-105.6l233.6-259.52L768 611.84l41.28-48.64-89.6-75.52a32 32 0 0 0-44.48 2.88l-177.92 197.76-139.2-120.64a32 32 0 0 0-43.52 1.6L128 755.84V208h768v273.92h64V176a32 32 0 0 0-32-32zM338.56 635.84L454.4 736l-67.2 74.56 6.08 5.44H160z"
-      /><path d="M448 384m-80 0a80 80 0 1 0 160 0 80 80 0 1 0-160 0Z" /><path
-        d="M848 640h-64v112H672v64h112V928h64v-112H960v-64h-112V640z"
-      /></svg
-    >
-  </button> -->
+  <svg class="h-4 w-4" viewBox="0 0 1036 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><path d="M143.36 852.232258L202.157419 632.898065l151.948387 167.80387z m247.08129-91.829677L238.492903 594.580645 638.183226 178.374194l151.948387 167.803871-399.690323 414.224516z m439.329033-454.523871l-151.948388-167.803871L796.738065 16.516129a52.190968 52.190968 0 0 1 73.992258 0l3.303225 3.303226 75.974194 83.901935a60.779355 60.779355 0 0 1 0 82.580645L829.770323 305.87871z m147.984516 718.12129H58.797419a58.797419 58.797419 0 0 1 0-117.594839h918.95742a58.797419 58.797419 0 0 1 0 117.594839z"></path></svg>
+  </button>
+  {/if}
     <WinBtns />
   </TopBar>
   

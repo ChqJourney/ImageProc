@@ -50,3 +50,5 @@ export const resetRotation=()=>{
         return val;
     })
 }
+
+export const canvasStore=writable({scaleX:1.0,scaleY:1.0,translateX:0,translateY:0})
